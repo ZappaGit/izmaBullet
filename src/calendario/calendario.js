@@ -2,7 +2,8 @@
 // sincronizada en Android aparecen aquí, así que no hace falta OAuth.
 //
 // Regla: solo se modifican o borran eventos cuyo id guardó la propia app (tabla eventos_calendario).
-import * as Calendar from 'expo-calendar';
+// Se usa la API legacy de expo-calendar: la nueva (orientada a objetos) aún no cubre estas operaciones.
+import * as Calendar from 'expo-calendar/legacy';
 
 import { desdeClave, parsearHora, sumarDias } from '../dominio/fechas';
 import { TIPOS_FRECUENCIA } from '../dominio/habitos';

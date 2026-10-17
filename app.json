@@ -7,12 +7,6 @@
     "icon": "./assets/icon.png",
     "scheme": "izmabullet",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#f6f7fb"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -22,13 +16,29 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f6f7fb"
       },
-      "edgeToEdgeEnabled": true
+      "permissions": [
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      ["expo-router", { "root": "./src/app" }],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#f6f7fb"
+        }
+      ],
+      [
+        "expo-router",
+        {
+          "root": "./src/app"
+        }
+      ],
       "expo-sqlite",
       [
         "expo-calendar",
@@ -36,7 +46,17 @@
           "calendarPermission": "IzmaBullet necesita acceso al calendario para crear eventos de tus hábitos y fechas límite de tus objetivos. Solo modifica los eventos que crea la propia app."
         }
       ],
-      "expo-notifications"
-    ]
+      "expo-notifications",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "router": {
+        "root": "./src/app"
+      },
+      "eas": {
+        "projectId": "289d2f92-4fa3-4992-931f-00c659d27ba4"
+      }
+    },
+    "owner": "dieizqu"
   }
 }
