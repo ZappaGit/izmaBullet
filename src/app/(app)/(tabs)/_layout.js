@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
-import { useApp } from '../../contexto/ProveedorApp';
+import { useApp } from '../../../contexto/ProveedorApp';
 
 export default function TabsLayout() {
   const { tema } = useApp();
@@ -16,7 +16,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="hoy"
         options={{ title: 'Hoy', tabBarIcon: ({ color, size }) => <Ionicons name="sunny-outline" size={size} color={color} /> }}
       />
       <Tabs.Screen
