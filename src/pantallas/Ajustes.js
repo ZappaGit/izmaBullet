@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 import {
   estadoPermisoCalendario,
@@ -8,6 +8,7 @@ import {
   pedirPermisoCalendario,
 } from '../calendario/calendario';
 import { Boton, Chip, Pantalla, Seccion, Tarjeta, useEstilos } from '../componentes/ui';
+import { obtenerServicioCuenta } from '../cuenta/cliente';
 import { useApp } from '../contexto/ProveedorApp';
 import { estadoPermisoNotificaciones, pedirPermisoNotificaciones } from '../notificaciones/recordatorios';
 import { resincronizarCalendario } from '../servicios/acciones';
@@ -38,6 +39,8 @@ function explicarYPedir(titulo, texto, pedir) {
 export default function Ajustes() {
   const { repos, ajustes, guardarAjuste, version } = useApp();
   const estilos = useEstilos(crearEstilos);
+  const router = useRouter();
+  const servicioCuenta = obtenerServicioCuenta();
   const [permisoCalendario, setPermisoCalendario] = useState('undetermined');
   const [permisoNotificaciones, setPermisoNotificaciones] = useState('undetermined');
   const [calendarios, setCalendarios] = useState([]);
@@ -125,6 +128,16 @@ export default function Ajustes() {
           ) : null}
         </Tarjeta>
       </Seccion>
+
+      {servicioCuenta ? (
+        <Seccion titulo="Cuenta">
+          <Tarjeta>
+            <Text style={estilos.ayuda}>Opcional. Entra para vincular este móvil a tu cuenta.</Text>
+            <Boton titulo="Entrar" variante="secundario" onPress={() => router.push('/cuenta/entrar')} />
+            <Boton titulo="Crear cuenta" variante="secundario" onPress={() => router.push('/cuenta/alta')} />
+          </Tarjeta>
+        </Seccion>
+      ) : null}
 
       <Seccion titulo="Tema">
         <View style={estilos.fila}>
