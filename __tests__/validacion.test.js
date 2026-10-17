@@ -40,9 +40,12 @@ describe('validarHabito', () => {
 describe('validarObjetivo', () => {
   test('pide nombre y comprueba la fecha límite', () => {
     expect(validarObjetivo({ nombre: '', modo: 'manual', progresoManual: 0 }).nombre).toBeDefined();
-    expect(validarObjetivo({ nombre: 'Ahorro', modo: 'manual', progresoManual: 0, fechaLimite: '2026-02-30' }).fechaLimite)
+    expect(validarObjetivo({ nombre: 'Ahorro', modo: 'manual', progresoManual: 0, fechaLimite: '30/02/2026' }).fechaLimite)
       .toBeDefined();
-    expect(validarObjetivo({ nombre: 'Ahorro', modo: 'manual', progresoManual: 0, fechaLimite: '2026-02-28' })).toEqual({});
+    expect(validarObjetivo({ nombre: 'Ahorro', modo: 'manual', progresoManual: 0, fechaLimite: '2026-10-14' }).fechaLimite)
+      .toBeDefined();
+    expect(validarObjetivo({ nombre: 'Ahorro', modo: 'manual', progresoManual: 0, fechaLimite: '28/02/2026' })).toEqual({});
+    expect(validarObjetivo({ nombre: 'Ahorro', modo: 'manual', progresoManual: 0, fechaLimite: '' })).toEqual({});
   });
 
   test('en modo manual el progreso va de 0 a 100', () => {

@@ -5,6 +5,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { estadoPermisoCalendario, pedirPermisoCalendario } from '../calendario/calendario';
 import { Boton, Campo, Chip, Pantalla, Seccion, SelectorColor, useEstilos } from '../componentes/ui';
 import { useApp } from '../contexto/ProveedorApp';
+import { formatearFechaLocal } from '../dominio/fechas';
 import { MODOS_OBJETIVO } from '../dominio/objetivos';
 import { guardarObjetivo } from '../servicios/acciones';
 import { coloresHabito } from '../tema/colores';
@@ -39,7 +40,7 @@ export default function ObjetivoEditar() {
           descripcion: objetivo.descripcion,
           modo: objetivo.modo,
           progresoManual: objetivo.progresoManual,
-          fechaLimite: objetivo.fechaLimite ?? '',
+          fechaLimite: objetivo.fechaLimite ? formatearFechaLocal(objetivo.fechaLimite) : '',
           color: objetivo.color,
         });
       }
@@ -145,8 +146,8 @@ export default function ObjetivoEditar() {
       </Seccion>
 
       <Campo
-        etiqueta="Fecha límite (opcional, AAAA-MM-DD)"
-        placeholder="2026-12-31"
+        etiqueta="Fecha límite (opcional, dd/mm/aaaa)"
+        placeholder="31/12/2026"
         value={formulario.fechaLimite}
         onChangeText={(texto) => cambiar('fechaLimite', texto)}
         keyboardType="numbers-and-punctuation"

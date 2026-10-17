@@ -1,9 +1,11 @@
 import {
   claveFecha,
+  convertirFechaLocal,
   desdeClave,
   diaSemana,
   diferenciaDias,
   esClaveValida,
+  formatearFechaLocal,
   inicioSemana,
   parsearHora,
   sumarDias,
@@ -47,6 +49,23 @@ describe('fechas', () => {
     expect(esClaveValida('2026-02-28')).toBe(true);
     expect(esClaveValida('2026-13-01')).toBe(false);
     expect(esClaveValida('14/10/2026')).toBe(false);
+  });
+
+  test('convertirFechaLocal pasa dd/mm/aaaa a la clave interna AAAA-MM-DD', () => {
+    expect(convertirFechaLocal('14/10/2026')).toBe('2026-10-14');
+    expect(convertirFechaLocal('1/3/2027')).toBe('2027-03-01');
+  });
+
+  test('convertirFechaLocal rechaza fechas imposibles y formatos incorrectos', () => {
+    expect(convertirFechaLocal('30/02/2026')).toBeNull();
+    expect(convertirFechaLocal('14-10-2026')).toBeNull();
+    expect(convertirFechaLocal('2026-10-14')).toBeNull();
+    expect(convertirFechaLocal('')).toBeNull();
+  });
+
+  test('formatearFechaLocal muestra la clave como dd/mm/aaaa', () => {
+    expect(formatearFechaLocal('2026-10-14')).toBe('14/10/2026');
+    expect(formatearFechaLocal('2027-03-01')).toBe('01/03/2027');
   });
 
   test('parsearHora acepta HH:MM en 24 h y rechaza el resto', () => {

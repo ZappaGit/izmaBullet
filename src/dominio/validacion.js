@@ -1,6 +1,6 @@
 // Validación de los formularios de hábitos y objetivos. Devuelve { campo: mensaje } vacío si todo está bien.
 
-import { esClaveValida, parsearHora } from './fechas';
+import { convertirFechaLocal, parsearHora } from './fechas';
 import { TIPOS_FRECUENCIA } from './habitos';
 import { MODOS_OBJETIVO } from './objetivos';
 
@@ -39,8 +39,8 @@ export function validarObjetivo(datos) {
   if (!nombre) errores.nombre = 'Ponle un nombre al objetivo.';
   else if (nombre.length > 80) errores.nombre = 'El nombre puede tener hasta 80 caracteres.';
 
-  if (datos.fechaLimite && !esClaveValida(datos.fechaLimite)) {
-    errores.fechaLimite = 'La fecha debe tener el formato AAAA-MM-DD.';
+  if (datos.fechaLimite && !convertirFechaLocal(datos.fechaLimite)) {
+    errores.fechaLimite = 'La fecha debe tener el formato dd/mm/aaaa y existir.';
   }
   if (datos.modo === MODOS_OBJETIVO.MANUAL) {
     const progreso = Number(datos.progresoManual);

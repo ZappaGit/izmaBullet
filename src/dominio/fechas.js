@@ -48,6 +48,20 @@ export function esClaveValida(texto) {
   return /^\d{4}-\d{2}-\d{2}$/.test(texto) && claveFecha(desdeClave(texto)) === texto;
 }
 
+// Fecha escrita por el usuario como 'dd/mm/aaaa' → clave 'AAAA-MM-DD', o null si no es una fecha real.
+export function convertirFechaLocal(texto) {
+  const coincidencia = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(texto ?? '');
+  if (!coincidencia) return null;
+  const clave = `${coincidencia[3]}-${dosDigitos(Number(coincidencia[2]))}-${dosDigitos(Number(coincidencia[1]))}`;
+  return esClaveValida(clave) ? clave : null;
+}
+
+// Clave 'AAAA-MM-DD' → 'dd/mm/aaaa' para mostrarla al usuario.
+export function formatearFechaLocal(clave) {
+  const [anio, mes, dia] = clave.split('-');
+  return `${dia}/${mes}/${anio}`;
+}
+
 // 'HH:MM' en formato 24 h → { hora, minuto }, o null si no es válido.
 export function parsearHora(texto) {
   const coincidencia = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(texto ?? '');

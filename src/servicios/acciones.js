@@ -2,7 +2,7 @@
 // Las pantallas llaman aquí en lugar de hablar con el repositorio directamente.
 // Devuelven `avisos` (lista de textos) cuando el dato se guardó pero el calendario o los recordatorios fallaron.
 
-import { claveFecha } from '../dominio/fechas';
+import { claveFecha, convertirFechaLocal } from '../dominio/fechas';
 import { validarHabito, validarObjetivo } from '../dominio/validacion';
 import { TIPOS_FRECUENCIA } from '../dominio/habitos';
 import { MODOS_OBJETIVO } from '../dominio/objetivos';
@@ -76,7 +76,8 @@ function cambiosObjetivo(formulario) {
     descripcion: (formulario.descripcion ?? '').trim(),
     modo: formulario.modo,
     progresoManual: formulario.modo === MODOS_OBJETIVO.MANUAL ? Number(formulario.progresoManual) : 0,
-    fechaLimite: formulario.fechaLimite || null,
+    // El formulario usa dd/mm/aaaa; se guarda como AAAA-MM-DD.
+    fechaLimite: formulario.fechaLimite ? convertirFechaLocal(formulario.fechaLimite) : null,
     color: formulario.color,
   };
 }
