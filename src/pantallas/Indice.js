@@ -14,8 +14,7 @@ const crearEstilos = (t) =>
       width: 40,
       height: 40,
       borderRadius: radio.m,
-      backgroundColor: t.primary,
-      color: t.primaryText,
+      color: '#ffffff',
       textAlign: 'center',
       textAlignVertical: 'center',
       fontSize: tipografia.subtitulo,
@@ -43,7 +42,7 @@ export default function Indice() {
           onPress={() => router.push(aplicacion.ruta)}
         >
           <View style={estilos.fila}>
-            <Text style={estilos.numero}>{aplicacion.numero}</Text>
+            <Text style={[estilos.numero, { backgroundColor: aplicacion.color }]}>{aplicacion.numero}</Text>
             <View style={estilos.textos}>
               <Text style={estilos.nombre}>{aplicacion.nombre}</Text>
               <Text style={estilos.descripcion}>{aplicacion.descripcion}</Text>

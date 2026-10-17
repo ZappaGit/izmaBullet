@@ -1,4 +1,4 @@
-import { APLICACIONES, buscarAplicacionPorNumero, etiquetaAplicacion } from '../src/dominio/aplicaciones';
+import { APLICACIONES, buscarAplicacionPorNumero, etiquetaAplicacion, marcasIndice } from '../src/dominio/aplicaciones';
 
 describe('APLICACIONES', () => {
   test('numera las aplicaciones desde 1 y sin saltos', () => {
@@ -39,5 +39,24 @@ describe('color clave de cada aplicación', () => {
 
   test('Registro futuro es verde mate', () => {
     expect(buscarAplicacionPorNumero(2).color).toBe('#5f7d6a');
+  });
+});
+
+describe('marcasIndice', () => {
+  test('devuelve una marca por aplicación con su color clave', () => {
+    const marcas = marcasIndice(2);
+
+    expect(marcas.map((marca) => marca.numero)).toEqual([1, 2]);
+    expect(marcas[1].color).toBe('#5f7d6a');
+  });
+
+  test('marca como activa solo la aplicación actual', () => {
+    const marcas = marcasIndice(2);
+
+    expect(marcas.filter((marca) => marca.activa).map((marca) => marca.numero)).toEqual([2]);
+  });
+
+  test('sin aplicación actual no hay ninguna marca activa', () => {
+    expect(marcasIndice(null).every((marca) => marca.activa === false)).toBe(true);
   });
 });

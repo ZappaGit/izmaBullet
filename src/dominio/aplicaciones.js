@@ -30,3 +30,13 @@ export function buscarAplicacionPorNumero(numero) {
 export function etiquetaAplicacion(aplicacion) {
   return `${aplicacion.numero}  ${aplicacion.nombre}`;
 }
+
+// Una marca por aplicación para el índice lateral. `activa` es true solo para la aplicación en la que estamos.
+export function marcasIndice(numeroActual) {
+  return APLICACIONES.map((aplicacion) => ({
+    numero: aplicacion.numero,
+    nombre: aplicacion.nombre,
+    color: aplicacion.color,
+    activa: aplicacion.numero === numeroActual,
+  }));
+}

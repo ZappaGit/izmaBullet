@@ -1,101 +1,141 @@
-// Aplicación 2 del Índice: Registro futuro. Dos páginas que se cambian deslizando
-// el dedo de derecha a izquierda; cada página lleva dos meses.
+// Aplicación 2: Registro futuro, con el estilo IzmaBullet Journal.
+// Dos páginas que se cambian deslizando el dedo de derecha a izquierda.
+// La página Registro lleva el índice numerado a la izquierda; las anillas van al lado de encuadernación.
+import { PatrickHand_400Regular, useFonts } from '@expo-google-fonts/patrick-hand';
 import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import Svg, { Circle, Defs, Pattern, Rect } from 'react-native-svg';
 
-import { useEstilos } from '../componentes/ui';
+import { buscarAplicacionPorNumero, marcasIndice } from '../dominio/aplicaciones';
 import { PAGINAS_FUTURO, mesDesplazado } from '../dominio/futuro';
-import { areaTactil, espaciado, radio, tipografia } from '../tema/escalas';
+import { JOURNAL } from '../tema/journal';
+import { areaTactil } from '../tema/escalas';
 
-// Círculos de la columna lateral de cada página (por ahora sin función: pendiente de definir).
-const CIRCULOS_POR_PAGINA = 10;
-const TAMANO_CIRCULO = 12;
-const ANCHO_PESTANA = areaTactil;
+const NUMERO_APLICACION = 2;
+const ANCHO_INDICE = 44;
+const TAMANO_PUNTO = 16;
+const ANILLAS = 10;
+const PASO_ANILLA = 84;
+const TAMANO_ANILLA = 14;
+const MARGEN_ANILLA = 12;
+const INICIO_ANILLAS = 60;
 
-const crearEstilos = (t) =>
-  StyleSheet.create({
-    raiz: { flex: 1, backgroundColor: t.bg },
-    pagina: { flex: 1, flexDirection: 'row', paddingLeft: ANCHO_PESTANA, paddingRight: espaciado.m },
-    contenido: { flex: 1, paddingVertical: espaciado.m, gap: espaciado.l },
-    titulo: { color: t.text, fontSize: tipografia.titulo, fontWeight: '700' },
-    mes: { gap: espaciado.xs },
-    etiquetaMes: { color: t.primary, fontSize: tipografia.pequeno, fontWeight: '600' },
-    nombreMes: { color: t.text, fontSize: tipografia.subtitulo, fontWeight: '600' },
-    columna: { width: TAMANO_CIRCULO + espaciado.s, alignItems: 'center', paddingTop: espaciado.m, gap: espaciado.s },
-    circulo: {
-      width: TAMANO_CIRCULO,
-      height: TAMANO_CIRCULO,
-      borderRadius: TAMANO_CIRCULO / 2,
-      borderWidth: 1.5,
-      borderColor: t.muted,
-    },
-    pestana: {
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      width: ANCHO_PESTANA,
-      backgroundColor: t.surface,
-      borderRightWidth: 1,
-      borderColor: t.border,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    pestanaTexto: {
-      color: t.primary,
-      fontSize: tipografia.pequeno,
-      fontWeight: '700',
-      transform: [{ rotate: '-90deg' }],
-      width: 120,
-      textAlign: 'center',
-    },
-  });
-
-export default function RegistroFuturo() {
-  const router = useRouter();
-  const estilos = useEstilos(crearEstilos);
-  const { width } = useWindowDimensions();
-  const fechaHoy = new Date();
-
+function FondoPuntos() {
   return (
-    <View style={estilos.raiz}>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ width: width * PAGINAS_FUTURO.length }}
-      >
-        {PAGINAS_FUTURO.map((pagina) => (
-          <View key={pagina.titulo} style={[estilos.pagina, { width }]}>
-            <View style={estilos.contenido}>
-              <Text style={estilos.titulo}>{pagina.titulo}</Text>
-              {pagina.meses.map((desplazamiento) => {
-                const mes = mesDesplazado(fechaHoy, desplazamiento);
-                return (
-                  <View key={mes.etiqueta} style={estilos.mes}>
-                    <Text style={estilos.etiquetaMes}>{mes.etiqueta}</Text>
-                    <Text style={estilos.nombreMes}>{mes.nombre}</Text>
-                  </View>
-                );
-              })}
-            </View>
-            <View style={estilos.columna} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              {Array.from({ length: CIRCULOS_POR_PAGINA }, (_, indice) => (
-                <View key={indice} style={estilos.circulo} />
-              ))}
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+    <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+      <Defs>
+        <Pattern id="puntos" width={TAMANO_PUNTO} height={TAMANO_PUNTO} patternUnits="userSpaceOnUse">
+          <Circle cx={1} cy={1} r={1} fill={JOURNAL.punto} />
+        </Pattern>
+      </Defs>
+      <Rect width="100%" height="100%" fill="url(#puntos)" />
+    </Svg>
+  );
+}
 
-      <Pressable
-        onPress={() => router.push('/indice')}
-        accessibilityRole="button"
-        accessibilityLabel="Volver al Índice"
-        style={estilos.pestana}
-      >
-        <Text style={estilos.pestanaTexto}>ÍNDICE</Text>
-      </Pressable>
+function Anillas({ lado }) {
+  const lateral = lado === 'derecha' ? { right: MARGEN_ANILLA } : { left: MARGEN_ANILLA };
+  return (
+    <View pointerEvents="none" style={[StyleSheet.absoluteFill, { width: TAMANO_ANILLA }, lateral]}>
+      {Array.from({ length: ANILLAS }, (_, indice) => (
+        <View key={indice} style={[estilos.anilla, { top: INICIO_ANILLAS + indice * PASO_ANILLA }]} />
+      ))}
     </View>
   );
 }
+
+function IndiceLateral() {
+  const router = useRouter();
+  return (
+    <View style={estilos.indice}>
+      {marcasIndice(NUMERO_APLICACION).map((marca) => (
+        <Pressable
+          key={marca.numero}
+          onPress={() => router.push(buscarAplicacionPorNumero(marca.numero).ruta)}
+          accessibilityRole="link"
+          accessibilityLabel={marca.nombre}
+          accessibilityState={{ selected: marca.activa }}
+          style={[estilos.filaIndice, marca.activa && { borderColor: marca.color }]}
+        >
+          <Text style={[estilos.numeroIndice, { color: marca.color }]}>[{marca.numero}]</Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+}
+
+function Pagina({ pagina, ancho }) {
+  const hoy = new Date();
+  const conIndice = pagina.titulo === 'Registro';
+  const color = buscarAplicacionPorNumero(NUMERO_APLICACION).color;
+
+  return (
+    <View style={[estilos.pagina, { width: ancho }]}>
+      <FondoPuntos />
+      <Anillas lado={conIndice ? 'derecha' : 'izquierda'} />
+      {conIndice ? <IndiceLateral /> : null}
+      <View style={estilos.contenido}>
+        <Text style={[estilos.titulo, { color }]}>{pagina.titulo.toUpperCase()}</Text>
+        {pagina.meses.map((desplazamiento) => {
+          const mes = mesDesplazado(hoy, desplazamiento);
+          return (
+            <View key={mes.etiqueta} style={estilos.mes}>
+              <Text style={estilos.etiquetaMes}>{mes.etiqueta.toUpperCase()}</Text>
+              <View style={estilos.subrayado} />
+              <Text style={estilos.fechaMes}>{mes.nombre}</Text>
+            </View>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+export default function RegistroFuturo() {
+  // Mientras carga la fuente se usa la del sistema; no bloquea la pantalla.
+  useFonts({ PatrickHand_400Regular });
+  const { width } = useWindowDimensions();
+
+  return (
+    <ScrollView
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      style={{ flex: 1, backgroundColor: JOURNAL.papel }}
+      contentContainerStyle={{ flexGrow: 1, width: width * PAGINAS_FUTURO.length }}
+    >
+      {PAGINAS_FUTURO.map((pagina) => (
+        <Pagina key={pagina.titulo} pagina={pagina} ancho={width} />
+      ))}
+    </ScrollView>
+  );
+}
+
+const estilos = StyleSheet.create({
+  pagina: { flex: 1, backgroundColor: JOURNAL.papel, overflow: 'hidden' },
+  contenido: { flex: 1, paddingTop: 48, paddingLeft: 56, paddingRight: 40, gap: 28 },
+  titulo: { fontFamily: 'PatrickHand_400Regular', fontSize: 44, letterSpacing: 6 },
+  mes: { gap: 4 },
+  etiquetaMes: { fontFamily: 'PatrickHand_400Regular', fontSize: 32, color: JOURNAL.tinta },
+  subrayado: { width: 150, height: 2, backgroundColor: JOURNAL.tinta },
+  fechaMes: { fontFamily: 'PatrickHand_400Regular', fontSize: 20, color: JOURNAL.tinta },
+  anilla: {
+    position: 'absolute',
+    width: TAMANO_ANILLA,
+    height: TAMANO_ANILLA,
+    borderRadius: TAMANO_ANILLA / 2,
+    backgroundColor: JOURNAL.anillaRelleno,
+    borderWidth: 1.5,
+    borderColor: JOURNAL.anillaTrazo,
+  },
+  indice: { position: 'absolute', left: 6, top: 136, width: ANCHO_INDICE },
+  filaIndice: {
+    minHeight: areaTactil,
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+    borderRadius: 4,
+    paddingHorizontal: 2,
+  },
+  numeroIndice: { fontFamily: 'PatrickHand_400Regular', fontSize: 22 },
+});

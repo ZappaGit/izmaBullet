@@ -60,6 +60,16 @@ Pendiente: confirmar los colores propuestos (3 a 6) y añadir al código las apl
 - Página **Inventario Personal** (63:2): `Inventario Personal A` (63:3) y `B` (63:1281). Aplicación 4, ocre mate.
 - Página **Arranque**: Carga y Índice, versiones Midori A (solo puntos) y B (puntos y anillas).
 
-## Cómo aplicarlo en código
+## Cómo está en la app
 
-Pendiente. La app todavía no usa este estilo: las pantallas de `src/pantallas/` siguen con el tema claro y oscuro de `src/tema/colores.js`. Al portarlo, la fuente Patrick Hand se carga con `expo-font` y el fondo de puntos se hace con un SVG de fondo, no con cientos de vistas.
+- **Tokens:** `src/tema/journal.js` (papel, tinta, punto, anillas y fuente). Es un estilo propio: no usa el tema claro/oscuro de `src/tema/colores.js`.
+- **Fuente:** Patrick Hand, paquete `@expo-google-fonts/patrick-hand`, cargada en `RegistroFuturo.js` con `useFonts`. Mientras carga, se usa la del sistema.
+- **Fondo de puntos:** SVG con un patrón de 16 px (`react-native-svg`), no cientos de vistas.
+- **Registro futuro** (`src/pantallas/RegistroFuturo.js`): dos páginas deslizables. La página Registro lleva el índice a la izquierda; las anillas van a la derecha en Registro y a la izquierda en Futuro. El título va en el color clave de la aplicación.
+- **Índice** (`src/pantallas/Indice.js`): cada número lleva el color clave de su aplicación.
+- **Marcas del índice:** `marcasIndice(numeroActual)` en `src/dominio/aplicaciones.js` decide qué número está activo.
+
+Pendiente:
+- Las listas de elementos (uno, dos, tres…) de cada mes. El modelo de datos todavía no existe, así que la app no muestra ninguna.
+- Los números 3 a 6 del índice y sus colores, cuando se confirmen.
+- Las pantallas Hábitos y Objetivos con estilo Journal: sus diseños están en Figma, pero aún no se han portado.
