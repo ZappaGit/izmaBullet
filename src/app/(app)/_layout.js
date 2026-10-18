@@ -1,32 +1,15 @@
-import { Drawer } from 'expo-router/drawer';
+import { Stack } from 'expo-router';
 
-import { useApp } from '../../contexto/ProveedorApp';
-import { APLICACIONES, etiquetaAplicacion } from '../../dominio/aplicaciones';
+import { JOURNAL } from '../../tema/journal';
 
-// Menú lateral común a todas las aplicaciones. Cada una lleva su número,
-// así el usuario ve el mismo orden estés donde estés.
-export default function AppLayout() {
-  const { tema } = useApp();
+// Subapps del cuaderno. Sin cabecera ni menú lateral: se navega con el índice [1]…[7]
+// (RF-NAV-3, RF-CAB-1). El botón atrás de Android vuelve al Índice.
+export default function SubappsLayout() {
   return (
-    <Drawer
-      screenOptions={{
-        headerStyle: { backgroundColor: tema.surface },
-        headerTintColor: tema.primary,
-        headerTitleStyle: { color: tema.text },
-        drawerStyle: { backgroundColor: tema.surface },
-        drawerActiveTintColor: tema.primary,
-        drawerInactiveTintColor: tema.text,
-        sceneStyle: { backgroundColor: tema.bg },
-      }}
-    >
-      <Drawer.Screen name="indice" options={{ title: 'Índice', drawerLabel: 'Índice' }} />
-      {APLICACIONES.map((aplicacion) => (
-        <Drawer.Screen
-          key={aplicacion.pantalla}
-          name={aplicacion.pantalla}
-          options={{ title: aplicacion.nombre, drawerLabel: etiquetaAplicacion(aplicacion) }}
-        />
-      ))}
-    </Drawer>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: JOURNAL.papel }, animation: 'fade' }}>
+      <Stack.Screen name="indice" />
+      <Stack.Screen name="registro-futuro" />
+      <Stack.Screen name="(tabs)" />
+    </Stack>
   );
 }

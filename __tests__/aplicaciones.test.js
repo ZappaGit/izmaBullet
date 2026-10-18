@@ -1,62 +1,59 @@
 import { APLICACIONES, buscarAplicacionPorNumero, etiquetaAplicacion, marcasIndice } from '../src/dominio/aplicaciones';
 
-describe('APLICACIONES', () => {
-  test('numera las aplicaciones desde 1 y sin saltos', () => {
-    const numeros = APLICACIONES.map((aplicacion) => aplicacion.numero);
-
-    expect(numeros).toEqual(APLICACIONES.map((_, indice) => indice + 1));
+describe('APLICACIONES (subapps)', () => {
+  test('numera las siete subapps desde 1 y sin saltos', () => {
+    expect(APLICACIONES.map((a) => a.numero)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 
-  test('la aplicación 2 es Registro futuro', () => {
-    expect(buscarAplicacionPorNumero(2).nombre).toBe('Registro futuro');
+  test('sigue el orden de los requisitos', () => {
+    expect(APLICACIONES.map((a) => a.nombre)).toEqual([
+      'Índice', 'Registro futuro', 'Conocimiento', 'Inventario personal',
+      'Seguimiento', 'Hábitos y objetivos', 'Ajustes e info',
+    ]);
   });
-});
 
-describe('buscarAplicacionPorNumero', () => {
+  test('las subapps disponibles tienen ruta y las demás no', () => {
+    for (const a of APLICACIONES) {
+      if (a.disponible) expect(a.ruta).toMatch(/^\//);
+      else expect(a.ruta).toBeNull();
+    }
+  });
+
+  test('Registro futuro es verde mate y está disponible', () => {
+    const registro = buscarAplicacionPorNumero(2);
+    expect(registro.color).toBe('#5f7d6a');
+    expect(registro.disponible).toBe(true);
+  });
+
   test('devuelve undefined si no existe ese número', () => {
     expect(buscarAplicacionPorNumero(99)).toBeUndefined();
   });
 });
 
-describe('etiquetaAplicacion', () => {
-  test('pone el número delante del nombre en el menú lateral', () => {
-    expect(etiquetaAplicacion(buscarAplicacionPorNumero(1))).toBe('1  IzmaBullet');
+describe('color clave', () => {
+  test('cada subapp tiene un color hexadecimal distinto', () => {
+    const colores = APLICACIONES.map((a) => a.color.toLowerCase());
+    for (const c of colores) expect(c).toMatch(/^#[0-9a-f]{6}$/);
+    expect(new Set(colores).size).toBe(colores.length);
   });
 });
 
-describe('color clave de cada aplicación', () => {
-  test('cada aplicación tiene un color hexadecimal', () => {
-    for (const aplicacion of APLICACIONES) {
-      expect(aplicacion.color).toMatch(/^#[0-9a-f]{6}$/i);
-    }
-  });
-
-  test('ningún color se repite entre aplicaciones', () => {
-    const colores = APLICACIONES.map((aplicacion) => aplicacion.color.toLowerCase());
-
-    expect(new Set(colores).size).toBe(colores.length);
-  });
-
-  test('Registro futuro es verde mate', () => {
-    expect(buscarAplicacionPorNumero(2).color).toBe('#5f7d6a');
+describe('etiquetaAplicacion', () => {
+  test('pone el número entre corchetes delante del nombre', () => {
+    expect(etiquetaAplicacion(buscarAplicacionPorNumero(2))).toBe('[2]  Registro futuro');
   });
 });
 
 describe('marcasIndice', () => {
-  test('devuelve una marca por aplicación con su color clave', () => {
-    const marcas = marcasIndice(2);
-
-    expect(marcas.map((marca) => marca.numero)).toEqual([1, 2]);
-    expect(marcas[1].color).toBe('#5f7d6a');
+  test('marca como activa solo la subapp actual', () => {
+    expect(marcasIndice(2).filter((m) => m.activa).map((m) => m.numero)).toEqual([2]);
   });
 
-  test('marca como activa solo la aplicación actual', () => {
-    const marcas = marcasIndice(2);
-
-    expect(marcas.filter((marca) => marca.activa).map((marca) => marca.numero)).toEqual([2]);
+  test('sin subapp actual no hay ninguna activa', () => {
+    expect(marcasIndice(null).some((m) => m.activa)).toBe(false);
   });
 
-  test('sin aplicación actual no hay ninguna marca activa', () => {
-    expect(marcasIndice(null).every((marca) => marca.activa === false)).toBe(true);
+  test('incluye si la subapp está disponible', () => {
+    expect(marcasIndice(2).find((m) => m.numero === 3).disponible).toBe(false);
   });
 });

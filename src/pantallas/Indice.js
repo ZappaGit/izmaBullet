@@ -1,55 +1,42 @@
-// Índice de aplicaciones. Cada una lleva su número, que también aparece en el menú lateral.
-import { StyleSheet, Text, View } from 'react-native';
+// Subapp 1: Índice (Índice Midori A, solo puntos). Lista [1]…[7]; las subapps
+// no disponibles salen atenuadas y no se pueden abrir. No lleva índice lateral.
+import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Pantalla, Tarjeta, useEstilos } from '../componentes/ui';
+import { Papel, TituloPagina, estilosJournal } from '../componentes/journal';
 import { APLICACIONES, etiquetaAplicacion } from '../dominio/aplicaciones';
-import { espaciado, radio, tipografia } from '../tema/escalas';
-
-const crearEstilos = (t) =>
-  StyleSheet.create({
-    intro: { color: t.muted, fontSize: tipografia.cuerpo, lineHeight: 22 },
-    fila: { flexDirection: 'row', alignItems: 'center', gap: espaciado.m },
-    numero: {
-      width: 40,
-      height: 40,
-      borderRadius: radio.m,
-      color: '#ffffff',
-      textAlign: 'center',
-      textAlignVertical: 'center',
-      fontSize: tipografia.subtitulo,
-      fontWeight: '700',
-      lineHeight: 40,
-    },
-    nombre: { color: t.text, fontSize: tipografia.subtitulo, fontWeight: '600' },
-    descripcion: { color: t.muted, fontSize: tipografia.pequeno },
-    textos: { flex: 1 },
-  });
+import { areaTactil } from '../tema/escalas';
 
 export default function Indice() {
   const router = useRouter();
-  const estilos = useEstilos(crearEstilos);
-
+  const { top } = useSafeAreaInsets();
   return (
-    <Pantalla>
-      <Text style={estilos.intro}>
-        Elige una aplicación. Su número aparece siempre en el menú lateral.
-      </Text>
-      {APLICACIONES.map((aplicacion) => (
-        <Tarjeta
-          key={aplicacion.numero}
-          etiqueta={etiquetaAplicacion(aplicacion)}
-          onPress={() => router.push(aplicacion.ruta)}
-        >
-          <View style={estilos.fila}>
-            <Text style={[estilos.numero, { backgroundColor: aplicacion.color }]}>{aplicacion.numero}</Text>
-            <View style={estilos.textos}>
-              <Text style={estilos.nombre}>{aplicacion.nombre}</Text>
-              <Text style={estilos.descripcion}>{aplicacion.descripcion}</Text>
-            </View>
-          </View>
-        </Tarjeta>
-      ))}
-    </Pantalla>
+    <Papel>
+      <ScrollView contentContainerStyle={[estilos.contenido, { paddingTop: top + 48 }]}>
+        <TituloPagina>Índice</TituloPagina>
+        {APLICACIONES.map((aplicacion) => (
+          <Pressable
+            key={aplicacion.numero}
+            disabled={!aplicacion.disponible || aplicacion.numero === 1}
+            onPress={() => router.push(aplicacion.ruta)}
+            accessibilityRole="link"
+            accessibilityState={{ disabled: !aplicacion.disponible }}
+            style={estilos.linea}
+          >
+            <Text style={[estilosJournal.texto, estilos.textoLinea, !aplicacion.disponible && estilos.atenuado]}>
+              {etiquetaAplicacion(aplicacion)}
+            </Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+    </Papel>
   );
 }
+
+const estilos = StyleSheet.create({
+  contenido: { paddingLeft: 56, paddingRight: 24, gap: 4 },
+  linea: { minHeight: areaTactil, justifyContent: 'center' },
+  textoLinea: { fontSize: 24, letterSpacing: 1 },
+  atenuado: { opacity: 0.35 },
+});
