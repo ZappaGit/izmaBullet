@@ -97,7 +97,8 @@ const estilos = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: JOURNAL.anillaTrazo,
   },
-  indice: { position: 'absolute', left: 6, width: ANCHO_INDICE },
+  // Encima del contenido de la página: si no, la hoja (ScrollView) se queda con los toques.
+  indice: { position: 'absolute', left: 6, width: ANCHO_INDICE, zIndex: 10, elevation: 10 },
   filaIndice: {
     minHeight: areaTactil,
     justifyContent: 'center',
