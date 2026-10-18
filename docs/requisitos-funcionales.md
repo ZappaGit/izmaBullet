@@ -17,8 +17,8 @@ Estado: **validado el 18/10/2026**, salvo lo marcado como pendiente. Cuando est�
 | 3 | Conocimiento | terracota `#9a6b5b` (propuesto) | Pendiente |
 | 4 | Inventario personal | ocre `#8c7a4e` (propuesto) | Diseñada (Figma, 3 páginas) |
 | 5 | Seguimiento | malva `#7d6b8a` (propuesto) | Pendiente |
-| 6 | Hábitos y objetivos | azul mate `#6b7f9a` | Lógica hecha; falta estilo Midori |
-| 7 | Ajustes e info | gris `#6f7378` (propuesto) | Pendiente |
+| 6 | Hábitos y objetivos | azul mate `#6b7f9a` | Hecha: páginas HOY, HÁBITOS, OBJETIVOS |
+| 7 | Ajustes e info | gris `#6f7378` (propuesto) | Hecha: páginas AJUSTES, INFO |
 
 - RF-SUB-1. El número de cada subapp es fijo y es su identidad: no cambia aunque se añadan subapps.
 - RF-SUB-2. Cada subapp tiene un color clave mate. Se usa solo en: su número del índice lateral, su título y su marca de "estás aquí".
@@ -74,6 +74,8 @@ Estado: **validado el 18/10/2026**, salvo lo marcado como pendiente. Cuando est�
 - Cuentas y sincronización (el código existe pero no se muestra).
 
 ## Pendiente de diseñar
+
+0. Detalle y formularios de hábito y objetivo (pantallas con estilo clásico, se abren desde la subapp 6).
 
 1. Elementos de Registro futuro e Inventario: cómo se crean, se marcan y se migran.
 2. Contenido de Conocimiento (3) y Seguimiento (5).

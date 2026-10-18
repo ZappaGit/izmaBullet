@@ -34,7 +34,7 @@ export default function NuevaClave() {
     return (
       <Pantalla>
         <Aviso texto="Contraseña cambiada. Ya puedes seguir usando la app." />
-        <Boton titulo="Ir a Ajustes" onPress={() => router.replace('/ajustes')} />
+        <Boton titulo="Ir a Ajustes e info" onPress={() => router.replace('/ajustes-info')} />
       </Pantalla>
     );
   }

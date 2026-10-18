@@ -9,7 +9,8 @@ export default function SubappsLayout() {
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: JOURNAL.papel }, animation: 'fade' }}>
       <Stack.Screen name="indice" />
       <Stack.Screen name="registro-futuro" />
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="habitos-objetivos" />
+      <Stack.Screen name="ajustes-info" />
     </Stack>
   );
 }

@@ -7,8 +7,8 @@ export const APLICACIONES = Object.freeze([
   { numero: 3, nombre: 'Conocimiento', color: '#9a6b5b', ruta: null, disponible: false },
   { numero: 4, nombre: 'Inventario personal', color: '#8c7a4e', ruta: null, disponible: false },
   { numero: 5, nombre: 'Seguimiento', color: '#7d6b8a', ruta: null, disponible: false },
-  { numero: 6, nombre: 'Hábitos y objetivos', color: '#6b7f9a', ruta: '/hoy', disponible: true },
-  { numero: 7, nombre: 'Ajustes e info', color: '#6f7378', ruta: '/ajustes', disponible: true },
+  { numero: 6, nombre: 'Hábitos y objetivos', color: '#6b7f9a', ruta: '/habitos-objetivos', disponible: true },
+  { numero: 7, nombre: 'Ajustes e info', color: '#6f7378', ruta: '/ajustes-info', disponible: true },
 ]);
 
 export function buscarAplicacionPorNumero(numero) {

@@ -2,7 +2,7 @@
 // Ver docs/estilo-journal.md y docs/requisitos-funcionales.md.
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Svg, { Circle, Defs, Pattern, Rect } from 'react-native-svg';
 
 import { marcasIndice } from '../dominio/aplicaciones';
@@ -108,5 +108,100 @@ const estilos = StyleSheet.create({
   },
   numeroIndice: { fontFamily: JOURNAL.fuente, fontSize: 22 },
   atenuado: { opacity: 0.35 },
-  titulo: { fontFamily: JOURNAL.fuente, fontSize: 44, letterSpacing: 6 },
+  titulo: { fontFamily: JOURNAL.fuente, fontSize: 44, letterSpacing: 6, marginBottom: 8 },
+  hoja: { paddingLeft: 56, paddingRight: 40, paddingBottom: 48, gap: 20 },
+  subtitulo: { gap: 4, marginTop: 8 },
+  textoSubtitulo: { fontSize: 28 },
+  linea: { width: 150, height: 2, backgroundColor: JOURNAL.tinta },
+  vineta: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, minHeight: areaTactil },
+  marca: { minWidth: areaTactil, minHeight: areaTactil, marginLeft: -12, alignItems: 'center' },
+  textoMarca: { fontSize: 24, lineHeight: 32 },
+  pulsable: { flex: 1 },
+  textosVineta: { flex: 1 },
+  textoVineta: { fontSize: 24, lineHeight: 32 },
+  detalleVineta: { fontSize: 17, opacity: 0.7 },
+  accion: { minHeight: areaTactil, justifyContent: 'center', alignSelf: 'flex-start' },
+  textoAccion: { fontSize: 22 },
+  nota: { fontSize: 20, opacity: 0.8 },
 });
+
+// ---- Controles Midori ------------------------------------------------------
+
+// Páginas que se cambian deslizando de derecha a izquierda (RF-NAV-5).
+// `paginas`: [{ clave, contenido(primera) }]. La primera lleva anillas a la derecha; el resto, a la izquierda.
+export function PaginasDeslizables({ paginas }) {
+  const { width } = useWindowDimensions();
+  return (
+    <ScrollView
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      style={{ flex: 1, backgroundColor: JOURNAL.papel }}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      {paginas.map((pagina, indice) => (
+        <Papel key={pagina.clave} anillas={indice === 0 ? 'derecha' : 'izquierda'} style={{ width }}>
+          {pagina.contenido(indice === 0)}
+        </Papel>
+      ))}
+    </ScrollView>
+  );
+}
+
+// Columna de contenido de una página, con margen para el índice y las anillas.
+export function Hoja({ children }) {
+  const { top } = useSafeAreaInsets();
+  return (
+    <ScrollView contentContainerStyle={[estilos.hoja, { paddingTop: top + 48 }]} showsVerticalScrollIndicator={false}>
+      {children}
+    </ScrollView>
+  );
+}
+
+// Subtítulo manuscrito con línea debajo (como "MES +1" o "qué quiero hacer").
+export function Subtitulo({ children }) {
+  return (
+    <View style={estilos.subtitulo}>
+      <Text style={[estilosJournal.texto, estilos.textoSubtitulo]}>{children}</Text>
+      <View style={estilos.linea} />
+    </View>
+  );
+}
+
+// Línea con viñeta. Con `onPress` se puede pulsar; `marca` sustituye la viñeta (p. ej. ○ / ●).
+export function Vineta({ children, detalle, onPress, marca = '•', onMarca, etiquetaMarca, colorMarca = JOURNAL.tinta }) {
+  const contenido = (
+    <View style={estilos.textosVineta}>
+      <Text style={[estilosJournal.texto, estilos.textoVineta]}>{children}</Text>
+      {detalle ? <Text style={[estilosJournal.texto, estilos.detalleVineta]}>{detalle}</Text> : null}
+    </View>
+  );
+  return (
+    <View style={estilos.vineta}>
+      {onMarca ? (
+        <Pressable onPress={onMarca} accessibilityRole="checkbox" accessibilityLabel={etiquetaMarca} hitSlop={8} style={estilos.marca}>
+          <Text style={[estilosJournal.texto, estilos.textoMarca, { color: colorMarca }]}>{marca}</Text>
+        </Pressable>
+      ) : (
+        <Text style={[estilosJournal.texto, estilos.textoMarca]}>{marca}</Text>
+      )}
+      {onPress ? (
+        <Pressable onPress={onPress} accessibilityRole="button" style={estilos.pulsable}>{contenido}</Pressable>
+      ) : contenido}
+    </View>
+  );
+}
+
+// Acción escrita a mano entre corchetes, en el color clave: [ + nuevo hábito ].
+export function Accion({ titulo, onPress, color = JOURNAL.tinta }) {
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" style={estilos.accion}>
+      <Text style={[estilosJournal.texto, estilos.textoAccion, { color }]}>[ {titulo} ]</Text>
+    </Pressable>
+  );
+}
+
+// Texto suelto en tinta (avisos, páginas vacías).
+export function Nota({ children }) {
+  return <Text style={[estilosJournal.texto, estilos.nota]}>{children}</Text>;
+}
