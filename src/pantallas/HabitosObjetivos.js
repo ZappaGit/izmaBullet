@@ -1,4 +1,4 @@
-// Subapp 6: Hábitos y objetivos, estilo Midori. Tres páginas deslizables: HOY, HÁBITOS y OBJETIVOS.
+// Subapp 6: Hábitos y objetivos, estilo Midori. Dos páginas deslizables: HÁBITOS y OBJETIVOS.
 // La lógica (frecuencias, rachas, progreso, recordatorios, calendario) es la de src/dominio y servicios.
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -27,7 +27,7 @@ function textoPlazo(dias) {
   return `faltan ${dias} ${dias === 1 ? 'día' : 'días'}`;
 }
 
-// Carga hábitos, registros y objetivos una vez para las tres páginas.
+// Carga hábitos, registros y objetivos una vez para las dos páginas.
 function useDatos() {
   const { repos, version } = useApp();
   const [datos, setDatos] = useState({ habitos: [], objetivos: [], registros: {} });
@@ -44,13 +44,11 @@ function useDatos() {
   return datos;
 }
 
-function PaginaHoy({ datos, primera }) {
+// Primera página. Los hábitos activos que tocan hoy llevan ○ / ● para marcar el día.
+function PaginaHabitos({ datos, primera }) {
   const { repos, recargar } = useApp();
   const router = useRouter();
   const hoy = claveFecha();
-  const activos = datos.habitos.filter((habito) => habito.estado === 'activo');
-  const filas = activos.filter((habito) => aparecerEnHoy(habito, datos.registros[habito.id], hoy));
-  const hechos = filas.filter((habito) => datos.registros[habito.id].has(hoy)).length;
 
   async function alternar(habito) {
     await marcarHabito(repos, habito.id, hoy, !datos.registros[habito.id].has(hoy));
@@ -61,72 +59,45 @@ function PaginaHoy({ datos, primera }) {
     <>
       {primera ? <IndiceLateral actual={NUMERO} /> : null}
       <Hoja>
-        <TituloPagina color={COLOR}>Hoy</TituloPagina>
-        <Nota>
-          {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-          {filas.length > 0 ? ` · ${hechos} de ${filas.length} hechos` : ''}
-        </Nota>
-        {activos.length === 0 ? (
-          <>
-            <Nota>Aún no tienes hábitos.</Nota>
-            <Accion titulo="+ nuevo hábito" color={COLOR} onPress={() => router.push('/habito/editar')} />
-          </>
-        ) : null}
-        {activos.length > 0 && filas.length === 0 ? <Nota>Nada pendiente hoy.</Nota> : null}
-        {filas.map((habito) => {
-          const registros = datos.registros[habito.id];
-          const hecho = registros.has(hoy);
-          const detalle = habito.tipo === 'veces'
-            ? `${registrosDeLaSemana(registros, hoy)} de ${habito.vecesPorSemana} esta semana`
-            : describirFrecuencia(habito);
-          return (
-            <Vineta
-              key={habito.id}
-              marca={hecho ? '●' : '○'}
-              colorMarca={COLOR}
-              onMarca={() => alternar(habito)}
-              etiquetaMarca={`${hecho ? 'Deshacer' : 'Marcar'} ${habito.nombre}`}
-              detalle={detalle}
-              onPress={() => router.push(`/habito/${habito.id}`)}
-            >
-              {habito.nombre}
-            </Vineta>
-          );
+        <TituloPagina color={COLOR}>Hábitos</TituloPagina>
+        <Accion titulo="+ nuevo hábito" color={COLOR} onPress={() => router.push('/habito/editar')} />
+        {datos.habitos.length === 0 ? <Nota>Aún no tienes hábitos.</Nota> : null}
+        {ESTADOS_HABITO.map(([estado, titulo]) => {
+          const grupo = datos.habitos.filter((habito) => habito.estado === estado);
+          if (grupo.length === 0) return null;
+          return [
+            <Subtitulo key={`t-${estado}`}>{titulo}</Subtitulo>,
+            ...grupo.map((habito) => {
+              const registros = datos.registros[habito.id];
+              const racha = calcularRachas(habito, registros, hoy);
+              const cumple7 = cumplimiento(habito, registros, hoy, 7);
+              const tocaHoy = estado === 'activo' && aparecerEnHoy(habito, registros, hoy);
+              const hecho = registros.has(hoy);
+              const frecuencia = habito.tipo === 'veces'
+                ? `${registrosDeLaSemana(registros, hoy)} de ${habito.vecesPorSemana} esta semana`
+                : describirFrecuencia(habito);
+              return (
+                <Vineta
+                  key={habito.id}
+                  {...(tocaHoy
+                    ? {
+                      marca: hecho ? '●' : '○',
+                      colorMarca: COLOR,
+                      onMarca: () => alternar(habito),
+                      etiquetaMarca: `${hecho ? 'Deshacer' : 'Marcar'} ${habito.nombre} hoy`,
+                    }
+                    : {})}
+                  detalle={`${frecuencia} · racha ${racha.actual} · 7 días ${cumple7 === null ? '—' : `${cumple7} %`}`}
+                  onPress={() => router.push(`/habito/${habito.id}`)}
+                >
+                  {habito.nombre}
+                </Vineta>
+              );
+            }),
+          ];
         })}
       </Hoja>
     </>
-  );
-}
-
-function PaginaHabitos({ datos }) {
-  const router = useRouter();
-  const hoy = claveFecha();
-  return (
-    <Hoja>
-      <TituloPagina color={COLOR}>Hábitos</TituloPagina>
-      <Accion titulo="+ nuevo hábito" color={COLOR} onPress={() => router.push('/habito/editar')} />
-      {ESTADOS_HABITO.map(([estado, titulo]) => {
-        const grupo = datos.habitos.filter((habito) => habito.estado === estado);
-        if (grupo.length === 0) return null;
-        return [
-          <Subtitulo key={`t-${estado}`}>{titulo}</Subtitulo>,
-          ...grupo.map((habito) => {
-            const registros = datos.registros[habito.id];
-            const racha = calcularRachas(habito, registros, hoy);
-            const cumple7 = cumplimiento(habito, registros, hoy, 7);
-            return (
-              <Vineta
-                key={habito.id}
-                detalle={`${describirFrecuencia(habito)} · racha ${racha.actual} · 7 días ${cumple7 === null ? '—' : `${cumple7} %`}`}
-                onPress={() => router.push(`/habito/${habito.id}`)}
-              >
-                {habito.nombre}
-              </Vineta>
-            );
-          }),
-        ];
-      })}
-    </Hoja>
   );
 }
 
@@ -166,8 +137,7 @@ export default function HabitosObjetivos() {
   return (
     <PaginasDeslizables
       paginas={[
-        { clave: 'hoy', contenido: (primera) => <PaginaHoy datos={datos} primera={primera} /> },
-        { clave: 'habitos', contenido: () => <PaginaHabitos datos={datos} /> },
+        { clave: 'habitos', contenido: (primera) => <PaginaHabitos datos={datos} primera={primera} /> },
         { clave: 'objetivos', contenido: () => <PaginaObjetivos datos={datos} /> },
       ]}
     />

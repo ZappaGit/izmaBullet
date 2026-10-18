@@ -17,7 +17,7 @@ Estado: **validado el 18/10/2026**, salvo lo marcado como pendiente. Cuando est�
 | 3 | Conocimiento | terracota `#9a6b5b` (propuesto) | Pendiente |
 | 4 | Inventario personal | ocre `#8c7a4e` (propuesto) | Diseñada (Figma, 3 páginas) |
 | 5 | Seguimiento | malva `#7d6b8a` (propuesto) | Pendiente |
-| 6 | Hábitos y objetivos | azul mate `#6b7f9a` | Hecha: páginas HOY, HÁBITOS, OBJETIVOS |
+| 6 | Hábitos y objetivos | azul mate `#6b7f9a` | Hecha: páginas HÁBITOS y OBJETIVOS (sin página Hoy) |
 | 7 | Ajustes e info | gris `#6f7378` (propuesto) | Hecha: páginas AJUSTES, INFO |
 
 - RF-SUB-1. El número de cada subapp es fijo y es su identidad: no cambia aunque se añadan subapps.
@@ -70,6 +70,7 @@ Estado: **validado el 18/10/2026**, salvo lo marcado como pendiente. Cuando est�
 - RF-HO-1. Pasan al estilo Midori; se elimina la barra de pestañas (Hoy, Hábitos, Objetivos, Ajustes).
 - RF-HO-2. El botón **+** de cada página abre la creación (reutiliza parte de Editar hábito / Editar objetivo).
 - RF-HO-3. Se mantiene toda la lógica actual: frecuencias, rachas, recordatorios y calendario.
+- RF-HO-5. No hay página Hoy. En HÁBITOS, los activos que tocan hoy llevan ○ / ● para marcar el día.
 - RF-HO-4. Es una sola subapp (nº 6). Ajustes (tema, calendario, permisos) pasa a la subapp 7, Ajustes e info.
 
 ## 10. Fuera de alcance por ahora
