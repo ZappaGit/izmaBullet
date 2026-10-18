@@ -54,7 +54,11 @@ Estado: **validado el 18/10/2026**, salvo lo marcado como pendiente. Cuando est�
 ## 7. Registro futuro (subapp 2)
 
 - RF-RF-1. Dos páginas: Registro (Mes +1, Mes +2) y Futuro (Mes +3, Mes +4). En pantalla se ve el nombre del mes en mayúsculas (NOVIEMBRE) con el año debajo; "Mes +N" es solo la regla interna. **Mes +N = mes actual + N**: en noviembre, Mes +1 es diciembre y Mes +2 es enero.
-- RF-RF-2. Cada mes contiene **elementos** (uno, dos, tres…). **Pendiente de diseñar:** cómo se crean, si se marcan como hechos y si pasan al mes siguiente.
+- RF-RF-2. Cabecera de cada mes: nombre y año en la misma línea (NOVIEMBRE 2026), con línea debajo.
+- RF-RF-3. Debajo de la línea, los **elementos** del mes con «•». Cada uno tiene «−» para eliminarlo.
+- RF-RF-4. Al final de la lista, «+» abre un campo para escribir un elemento nuevo (1 a 80 caracteres). Se añade al final.
+- RF-RF-5. Cada mes empieza con elementos por defecto (Cumpleaños, Citas, Pagos). Se pueden eliminar y no vuelven a aparecer.
+- **Pendiente de diseñar:** si los elementos se marcan como hechos y si pasan al mes siguiente.
 
 ## 8. Inventario personal (subapp 4)
 
@@ -77,6 +81,6 @@ Estado: **validado el 18/10/2026**, salvo lo marcado como pendiente. Cuando est�
 
 0. Detalle y formularios de hábito y objetivo (pantallas con estilo clásico, se abren desde la subapp 6).
 
-1. Elementos de Registro futuro e Inventario: cómo se crean, se marcan y se migran.
+1. Elementos: si se marcan como hechos y si pasan al mes siguiente. Elementos de Inventario.
 2. Contenido de Conocimiento (3) y Seguimiento (5).
 3. Color definitivo de las subapps 3, 4, 5 y 7.

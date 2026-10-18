@@ -14,5 +14,18 @@ export function mesDesplazado(fechaHoy, desplazamiento) {
   const primerDia = new Date(fechaHoy.getFullYear(), fechaHoy.getMonth() + desplazamiento, 1);
   const mes = NOMBRES_MESES[primerDia.getMonth()];
   const anio = primerDia.getFullYear();
-  return { etiqueta: `Mes +${desplazamiento}`, mes, anio, nombre: `${mes} de ${anio}` };
+  const clave = `${anio}-${String(primerDia.getMonth() + 1).padStart(2, '0')}`;
+  return { etiqueta: `Mes +${desplazamiento}`, mes, anio, nombre: `${mes} de ${anio}`, clave };
+}
+
+// Elementos con los que empieza cada mes. Se pueden eliminar con «−».
+export const ELEMENTOS_POR_DEFECTO = Object.freeze(['Cumpleaños', 'Citas', 'Pagos']);
+const LONGITUD_MAXIMA_ELEMENTO = 80;
+
+// Devuelve el mensaje de error, o null si el texto vale.
+export function validarElemento(texto) {
+  const limpio = (texto ?? '').trim();
+  if (!limpio) return 'Escribe algo.';
+  if (limpio.length > LONGITUD_MAXIMA_ELEMENTO) return `Hasta ${LONGITUD_MAXIMA_ELEMENTO} caracteres.`;
+  return null;
 }

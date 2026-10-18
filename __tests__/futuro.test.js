@@ -4,7 +4,7 @@ describe('mesDesplazado', () => {
   test('calcula el mes siguiente a la fecha de hoy', () => {
     const mes = mesDesplazado(new Date(2026, 9, 16), 1);
 
-    expect(mes).toEqual({ etiqueta: 'Mes +1', mes: 'noviembre', anio: 2026, nombre: 'noviembre de 2026' });
+    expect(mes).toEqual({ etiqueta: 'Mes +1', mes: 'noviembre', anio: 2026, nombre: 'noviembre de 2026', clave: '2026-11' });
   });
 
   test('pasa al año siguiente cuando se cruza diciembre', () => {

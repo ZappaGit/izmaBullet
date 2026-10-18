@@ -51,6 +51,31 @@ export const MIGRACIONES = [
     calendario_id TEXT NOT NULL
   );
   `,
+  // v2: elementos del registro futuro. `meses_futuro` recuerda qué meses ya recibieron
+  // sus elementos por defecto, para no volver a crearlos si el usuario los borra.
+  `
+  CREATE TABLE meses_futuro (
+    mes TEXT PRIMARY KEY
+  );
+
+  CREATE TABLE elementos_futuro (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mes TEXT NOT NULL,
+    texto TEXT NOT NULL,
+    orden INTEGER NOT NULL,
+    creado TEXT NOT NULL
+  );
+
+  CREATE INDEX elementos_futuro_mes ON elementos_futuro (mes, orden);
+  `,
+  // v3: una posición por mes. Impide duplicar los elementos por defecto si un mes se carga
+  // dos veces a la vez; antes se limpian los duplicados que ya existan.
+  `
+  DELETE FROM elementos_futuro
+  WHERE id NOT IN (SELECT MIN(id) FROM elementos_futuro GROUP BY mes, orden);
+
+  CREATE UNIQUE INDEX elementos_futuro_mes_orden ON elementos_futuro (mes, orden);
+  `,
 ];
 
 // Aplica las migraciones pendientes dentro de una transacción. Devuelve la versión final.

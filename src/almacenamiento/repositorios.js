@@ -2,6 +2,8 @@
 //   execAsync(sql), runAsync(sql, params), getAllAsync(sql, params), getFirstAsync(sql, params)
 // Así la misma lógica funciona en la app (expo-sqlite) y en las pruebas (sql.js).
 
+import { ELEMENTOS_POR_DEFECTO } from '../dominio/futuro';
+
 const ahora = () => new Date().toISOString();
 
 // Columnas que se pueden cambiar al actualizar, con su nombre en la base de datos.
@@ -223,5 +225,43 @@ export function crearRepositorios(bd) {
     },
   };
 
-  return { habitos, registros, objetivos, ajustes, eventosCalendario };
+  // Elementos del registro futuro, por mes 'AAAA-MM'.
+  const elementosFuturo = {
+    async deMes(mes) {
+      // Sin transacción: varios meses se cargan a la vez y expo-sqlite no admite transacciones
+      // simultáneas en la misma conexión. Cada INSERT solo actúa si el mes no se ha preparado aún,
+      // y el índice único (mes, orden) evita duplicados si dos cargas se cruzan.
+      const creado = new Date().toISOString();
+      for (const [orden, texto] of ELEMENTOS_POR_DEFECTO.entries()) {
+        await bd.runAsync(
+          `INSERT OR IGNORE INTO elementos_futuro (mes, texto, orden, creado)
+           SELECT ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM meses_futuro WHERE mes = ?)`,
+          [mes, texto, orden, creado, mes],
+        );
+      }
+      await bd.runAsync('INSERT OR IGNORE INTO meses_futuro (mes) VALUES (?)', [mes]);
+      const filas = await bd.getAllAsync(
+        'SELECT id, mes, texto FROM elementos_futuro WHERE mes = ? ORDER BY orden, id',
+        [mes],
+      );
+      return filas.map((fila) => ({ id: fila.id, mes: fila.mes, texto: fila.texto }));
+    },
+
+    async anadir(mes, texto) {
+      const fila = await bd.getFirstAsync(
+        'SELECT COALESCE(MAX(orden), -1) + 1 AS siguiente FROM elementos_futuro WHERE mes = ?',
+        [mes],
+      );
+      await bd.runAsync(
+        'INSERT INTO elementos_futuro (mes, texto, orden, creado) VALUES (?, ?, ?, ?)',
+        [mes, texto.trim(), fila.siguiente, new Date().toISOString()],
+      );
+    },
+
+    async eliminar(id) {
+      await bd.runAsync('DELETE FROM elementos_futuro WHERE id = ?', [id]);
+    },
+  };
+
+  return { habitos, registros, objetivos, ajustes, eventosCalendario, elementosFuturo };
 }
