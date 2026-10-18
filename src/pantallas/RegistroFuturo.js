@@ -1,5 +1,5 @@
 // Subapp 2: Registro futuro. Dos páginas que se cambian deslizando de derecha a izquierda.
-// Mes +N = mes actual + N. El índice lateral va solo en la primera página.
+// Mes +N = mes actual + N; en pantalla se ve el nombre del mes (NOVIEMBRE), no "MES +1". El índice lateral va solo en la primera página.
 import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,9 +21,9 @@ function Pagina({ pagina, ancho, primera, margenSuperior }) {
           const mes = mesDesplazado(hoy, desplazamiento);
           return (
             <View key={mes.etiqueta} style={estilos.mes}>
-              <Text style={[estilosJournal.texto, estilos.etiquetaMes]}>{mes.etiqueta.toUpperCase()}</Text>
+              <Text style={[estilosJournal.texto, estilos.etiquetaMes]}>{mes.mes.toUpperCase()}</Text>
               <View style={estilos.subrayado} />
-              <Text style={[estilosJournal.texto, estilos.fechaMes]}>{mes.nombre}</Text>
+              <Text style={[estilosJournal.texto, estilos.fechaMes]}>{mes.anio}</Text>
             </View>
           );
         })}

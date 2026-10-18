@@ -53,7 +53,7 @@ Estado: **validado el 18/10/2026**, salvo lo marcado como pendiente. Cuando est�
 
 ## 7. Registro futuro (subapp 2)
 
-- RF-RF-1. Dos páginas: Registro (Mes +1, Mes +2) y Futuro (Mes +3, Mes +4), con nombre real del mes. **Mes +N = mes actual + N**: en noviembre, Mes +1 es diciembre y Mes +2 es enero.
+- RF-RF-1. Dos páginas: Registro (Mes +1, Mes +2) y Futuro (Mes +3, Mes +4). En pantalla se ve el nombre del mes en mayúsculas (NOVIEMBRE) con el año debajo; "Mes +N" es solo la regla interna. **Mes +N = mes actual + N**: en noviembre, Mes +1 es diciembre y Mes +2 es enero.
 - RF-RF-2. Cada mes contiene **elementos** (uno, dos, tres…). **Pendiente de diseñar:** cómo se crean, si se marcan como hechos y si pasan al mes siguiente.
 
 ## 8. Inventario personal (subapp 4)

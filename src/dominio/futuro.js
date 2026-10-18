@@ -12,8 +12,7 @@ export const PAGINAS_FUTURO = Object.freeze([
 
 export function mesDesplazado(fechaHoy, desplazamiento) {
   const primerDia = new Date(fechaHoy.getFullYear(), fechaHoy.getMonth() + desplazamiento, 1);
-  return {
-    etiqueta: `Mes +${desplazamiento}`,
-    nombre: `${NOMBRES_MESES[primerDia.getMonth()]} de ${primerDia.getFullYear()}`,
-  };
+  const mes = NOMBRES_MESES[primerDia.getMonth()];
+  const anio = primerDia.getFullYear();
+  return { etiqueta: `Mes +${desplazamiento}`, mes, anio, nombre: `${mes} de ${anio}` };
 }
