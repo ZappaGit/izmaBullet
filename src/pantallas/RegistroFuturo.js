@@ -36,7 +36,7 @@ function FondoPuntos() {
 function Anillas({ lado }) {
   const lateral = lado === 'derecha' ? { right: MARGEN_ANILLA } : { left: MARGEN_ANILLA };
   return (
-    <View pointerEvents="none" style={[StyleSheet.absoluteFill, { width: TAMANO_ANILLA }, lateral]}>
+    <View pointerEvents="none" style={[estilos.columnaAnillas, lateral]}>
       {Array.from({ length: ANILLAS }, (_, indice) => (
         <View key={indice} style={[estilos.anilla, { top: INICIO_ANILLAS + indice * PASO_ANILLA }]} />
       ))}
@@ -119,6 +119,7 @@ const estilos = StyleSheet.create({
   etiquetaMes: { fontFamily: 'PatrickHand_400Regular', fontSize: 32, color: JOURNAL.tinta },
   subrayado: { width: 150, height: 2, backgroundColor: JOURNAL.tinta },
   fechaMes: { fontFamily: 'PatrickHand_400Regular', fontSize: 20, color: JOURNAL.tinta },
+  columnaAnillas: { position: 'absolute', top: 0, bottom: 0, width: TAMANO_ANILLA },
   anilla: {
     position: 'absolute',
     width: TAMANO_ANILLA,
