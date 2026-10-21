@@ -24,7 +24,18 @@ jobs:
             echo "Faltan los secrets SUPABASE_URL o SUPABASE_ANON_KEY" >&2
             exit 1
           fi
-          curl --fail --silent --show-error --max-time 30 \
+          # anon no tiene permisos sobre las tablas (revocados en las migraciones),
+          # así que la respuesta esperada es "permission denied" (42501): la
+          # petición llegó a Postgres y cuenta como actividad. Una clave inválida
+          # también da 401, pero sin ese código.
+          codigo=$(curl --silent --show-error --max-time 30 \
             -H "apikey: $SUPABASE_ANON_KEY" \
             "$SUPABASE_URL/rest/v1/pantallas?select=clave&limit=1" \
-            -o /dev/null -w "HTTP %{http_code}\n"
+            -o respuesta.json -w "%{http_code}")
+          echo "HTTP $codigo"
+          cat respuesta.json; echo
+          if [ "$codigo" = "200" ] || grep -q '"42501"' respuesta.json; then
+            echo "Postgres respondió: proyecto activo"
+          else
+            exit 1
+          fi
